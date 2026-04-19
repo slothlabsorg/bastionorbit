@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Rust build output
+src-tauri/target/
+
+# Tauri generated (mobile targets)
+src-tauri/gen/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+*.dmg
+
+# Platform bundles (built by CI)
+*.exe
+*.deb
+*.AppImage
+*.msi
+*.pkg
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp

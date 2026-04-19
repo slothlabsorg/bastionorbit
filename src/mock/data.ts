@@ -1,0 +1,131 @@
+import type { Bastion, Tunnel } from '@/types'
+
+const now = new Date()
+const ago = (ms: number) => new Date(now.getTime() - ms).toISOString()
+const from = (ms: number) => new Date(now.getTime() + ms).toISOString()
+
+export const mockBastions: Bastion[] = [
+  {
+    id: 'b-1',
+    name: 'prod-bastion',
+    host: 'bastion.corp.com',
+    user: 'ubuntu',
+    sshPort: 22,
+    keyPath: '~/.ssh/id_rsa_prod',
+    status: 'online',
+    lastChecked: ago(60_000),
+    targets: [
+      {
+        id: 't-1',
+        bastionId: 'b-1',
+        name: 'prod-postgres',
+        type: 'postgres',
+        remoteHost: 'prod-db.internal',
+        remotePort: 5432,
+        localPort: 5434,
+      },
+      {
+        id: 't-2',
+        bastionId: 'b-1',
+        name: 'prod-redis',
+        type: 'redis',
+        remoteHost: 'redis.internal',
+        remotePort: 6379,
+        localPort: 6380,
+      },
+      {
+        id: 't-3',
+        bastionId: 'b-1',
+        name: 'internal-api',
+        type: 'http',
+        remoteHost: 'api.internal',
+        remotePort: 8080,
+        localPort: 8080,
+      },
+    ],
+  },
+  {
+    id: 'b-2',
+    name: 'staging-bastion',
+    host: 'bastion-stg.corp.com',
+    user: 'ubuntu',
+    sshPort: 22,
+    keyPath: '~/.ssh/id_rsa_stg',
+    status: 'online',
+    lastChecked: ago(300_000),
+    targets: [
+      {
+        id: 't-4',
+        bastionId: 'b-2',
+        name: 'stg-postgres',
+        type: 'postgres',
+        remoteHost: 'stg-db.internal',
+        remotePort: 5432,
+        localPort: 5435,
+      },
+      {
+        id: 't-5',
+        bastionId: 'b-2',
+        name: 'stg-redis',
+        type: 'redis',
+        remoteHost: 'redis-stg.internal',
+        remotePort: 6379,
+        localPort: 6381,
+      },
+    ],
+  },
+  {
+    id: 'b-3',
+    name: 'my-vps',
+    host: '1.2.3.4',
+    user: 'deploy',
+    sshPort: 22,
+    keyPath: '~/.ssh/id_rsa_vps',
+    status: 'offline',
+    lastChecked: ago(3_600_000),
+    targets: [
+      {
+        id: 't-6',
+        bastionId: 'b-3',
+        name: 'vps-postgres',
+        type: 'postgres',
+        remoteHost: '127.0.0.1',
+        remotePort: 5432,
+        localPort: 5433,
+      },
+    ],
+  },
+]
+
+export const mockTunnels: Tunnel[] = [
+  {
+    id: 'tun-1',
+    bastionId: 'b-1',
+    targetId: 't-1',
+    bastionName: 'prod-bastion',
+    targetName: 'prod-postgres',
+    targetType: 'postgres',
+    remoteHost: 'prod-db.internal',
+    remotePort: 5432,
+    localPort: 5434,
+    startedAt: ago(12 * 60_000),
+    expiresAt: from(18 * 60_000),
+    status: 'active',
+    pid: 12345,
+  },
+  {
+    id: 'tun-2',
+    bastionId: 'b-1',
+    targetId: 't-2',
+    bastionName: 'prod-bastion',
+    targetName: 'prod-redis',
+    targetType: 'redis',
+    remoteHost: 'redis.internal',
+    remotePort: 6379,
+    localPort: 6380,
+    startedAt: ago(22 * 60_000),
+    expiresAt: from(8 * 60_000),
+    status: 'active',
+    pid: 12346,
+  },
+]
