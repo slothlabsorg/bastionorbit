@@ -1,10 +1,20 @@
 # Bastion Orbit
 
-**SSH tunnel manager for teams.** One click to forward a database or internal service through a bastion host — with auto-expiry timers so you never leave a tunnel open by accident.
+**SSH tunnel manager for developers.** One click to forward a database or internal service through a bastion host — with auto-expiry timers so you never leave a tunnel open by accident.
 
-Part of the [SlothLabs](https://slothlabs.org) family — alongside [CloudOrbit](../aws-switch-tauri) (AWS credentials) and [DataOrbit](../dataorbit) (database client).
+Part of the [SlothLabs](https://slothlabs.org) family — native Rust, free forever.
 
-> **Tip:** Open a Bastion Orbit tunnel to `localhost:5434`, then connect DataOrbit to that port — instant access to your production database, no VPN needed.
+---
+
+## Screenshots
+
+| Home — bastion detail | Active tunnels | Tunnels list |
+|---|---|---|
+| ![Home](screenshots/01-home-bastion-detail.png) | ![Active](screenshots/03-home-active-tunnels.png) | ![Tunnels](screenshots/05-tunnels-active-list.png) |
+
+| Add bastion wizard | Settings |
+|---|---|
+| ![Wizard](screenshots/08-wizard-step1-config.png) | ![Settings](screenshots/11-settings.png) |
 
 ---
 
@@ -28,33 +38,17 @@ Part of the [SlothLabs](https://slothlabs.org) family — alongside [CloudOrbit]
 
 ---
 
-## Screenshots
-
-> Coming soon — run `npm run screenshots` to generate locally.
-
----
-
-## The SlothLabs Suite
-
-| App | Purpose | Color |
-|-----|---------|-------|
-| [CloudOrbit](https://github.com/slothlabs/cloudorbit) | AWS credential manager | Blue |
-| [DataOrbit](https://github.com/slothlabs/dataorbit)   | Database client (DynamoDB, …) | Violet |
-| **Bastion Orbit** | SSH tunnel manager | Teal/Emerald |
-
----
-
 ## Installation
 
-### macOS (Homebrew)
+### Download
+
+Grab the latest `.dmg` / `.exe` / `.AppImage` from the [Releases](https://github.com/slothlabsorg/bastionorbit/releases) page.
+
+### macOS (Homebrew) — coming soon
 
 ```bash
 brew install slothlabs/tap/bastionorbit
 ```
-
-### Download
-
-Grab the latest `.dmg` / `.exe` / `.AppImage` from the [Releases](https://github.com/slothlabs/bastionorbit/releases) page.
 
 ---
 
@@ -70,24 +64,20 @@ Grab the latest `.dmg` / `.exe` / `.AppImage` from the [Releases](https://github
 
 ## DataOrbit integration
 
-Bastion Orbit and DataOrbit are designed to work together. Open a tunnel to your database via Bastion Orbit, then add a DataOrbit connection pointing to `localhost:<localPort>`. No VPN, no credential sharing — just a clean SSH tunnel.
-
-CloudOrbit users: if your bastion uses AWS IAM or EC2 Instance Connect, CloudOrbit can manage the short-lived SSH certificates automatically.
+Open a tunnel to your database via Bastion Orbit, then add a DataOrbit connection pointing to `localhost:<localPort>`. No VPN, no credential sharing — just a clean SSH tunnel.
 
 ---
 
 ## Development
 
-See [DEV_SETUP.md](./DEV_SETUP.md) for full setup instructions.
-
-Quick start:
+Requirements: Node 18+, Rust stable, Tauri v2 CLI.
 
 ```bash
 npm install
 npm run tauri dev
 ```
 
-Browser dev mode (mock data, no Tauri):
+Browser dev mode (mock data, no Tauri binary):
 
 ```bash
 npm run dev
@@ -118,6 +108,17 @@ cargo test
 
 ---
 
+## Contributing
+
+1. Fork the repo and create a branch: `git checkout -b my-feature`
+2. Make your changes and run the test suites above
+3. Open a pull request — all PRs require review before merging to `main`
+4. Direct pushes to `main` are disabled
+
+Please keep PRs focused: one feature or fix per PR. For large changes, open an issue first to discuss the approach.
+
+---
+
 ## Roadmap
 
 ### v0.2
@@ -133,9 +134,13 @@ cargo test
 
 ---
 
-## Contributing
+## Support the project
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
+Bastion Orbit is free and built on nights and weekends. If it saves you time, consider supporting continued development:
+
+- [Ko-fi](https://ko-fi.com/slothlabs)
+- [GitHub Sponsors](https://github.com/sponsors/slothlabsorg)
+- [Polar.sh](https://polar.sh/slothlabs)
 
 ---
 
