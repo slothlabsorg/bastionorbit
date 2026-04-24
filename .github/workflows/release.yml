@@ -56,9 +56,23 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # ── Crash reporting ─────────────────────────────────────────────────
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          # ── macOS code signing + notarization ────────────────────────────────
+          # Without these the DMG is unsigned — users see the unverified developer
+          # warning on first launch. Set all six secrets for a fully signed release.
+          # See RELEASING.md for instructions.
+          APPLE_CERTIFICATE:          ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY:     ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID:                   ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD:             ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID:              ${{ secrets.APPLE_TEAM_ID }}
+          TAURI_PRIVATE_KEY:          ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD:         ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: ${{ github.ref_name }}
+          releaseName: 'Bastion Orbit ${{ github.ref_name }}'
           releaseBody: |
             See [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
           releaseDraft: true

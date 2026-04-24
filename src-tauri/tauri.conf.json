@@ -29,6 +29,14 @@
       "csp": null
     }
   },
+  "plugins": {
+    "updater": {
+      "pubkey": "REPLACE_WITH_PUBLIC_KEY_FROM: npx tauri signer generate -w ~/.tauri/bastionorbit.key",
+      "endpoints": [
+        "https://raw.githubusercontent.com/slothlabsorg/bastionorbit/main/latest.json"
+      ]
+    }
+  },
   "bundle": {
     "active": true,
     "targets": "all",

@@ -4,6 +4,7 @@ import { api } from '@/lib/tauri'
 import { mockBastions, mockTunnels } from '@/mock/data'
 import { Shell } from '@/components/layout/Shell'
 import { AddBastionWizard } from '@/components/ui/AddBastionWizard'
+import { UpdateBanner } from '@/components/ui/UpdateBanner'
 import { Home } from '@/screens/Home'
 import { Tunnels } from '@/screens/Tunnels'
 import { BastionDetail } from '@/screens/BastionDetail'
@@ -170,27 +171,29 @@ export default function App() {
   }
 
   return (
-    <>
-      <Shell
-        screen={screen}
-        onNavigate={(s) => { setScreen(s); if (s === 'home' && bastions.length > 0 && !activeBastionId) setActiveBastionId(bastions[0].id) }}
-        sidebarCollapsed={sidebarCollapsed}
-        onToggleSidebar={() => setSidebarCollapsed(c => !c)}
-        bastions={bastions}
-        activeBastionId={activeBastionId}
-        onSelectBastion={(id) => { handleSelectBastion(id); setScreen('home') }}
-        onAddBastion={() => setWizardOpen(true)}
-        activeTunnelCount={activeTunnels.length}
-      >
-        {renderContent()}
-      </Shell>
-
+    <div className="flex flex-col h-screen overflow-hidden">
+      <UpdateBanner />
+      <div className="flex-1 min-h-0">
+        <Shell
+          screen={screen}
+          onNavigate={(s) => { setScreen(s); if (s === 'home' && bastions.length > 0 && !activeBastionId) setActiveBastionId(bastions[0].id) }}
+          sidebarCollapsed={sidebarCollapsed}
+          onToggleSidebar={() => setSidebarCollapsed(c => !c)}
+          bastions={bastions}
+          activeBastionId={activeBastionId}
+          onSelectBastion={(id) => { handleSelectBastion(id); setScreen('home') }}
+          onAddBastion={() => setWizardOpen(true)}
+          activeTunnelCount={activeTunnels.length}
+        >
+          {renderContent()}
+        </Shell>
+      </div>
       {wizardOpen && (
         <AddBastionWizard
           onClose={() => setWizardOpen(false)}
           onSave={handleAddBastion}
         />
       )}
-    </>
+    </div>
   )
 }

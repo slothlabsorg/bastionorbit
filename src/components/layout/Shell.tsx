@@ -23,7 +23,7 @@ export function Shell({
   activeTunnelCount, children,
 }: ShellProps) {
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden">
       <Titlebar activeTunnelCount={activeTunnelCount} />
 
       <div className="flex flex-1 overflow-hidden">
