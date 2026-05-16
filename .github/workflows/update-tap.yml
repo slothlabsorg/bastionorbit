@@ -1,0 +1,85 @@
+name: Update Homebrew Tap
+
+# Fires when a draft release is published. Also exposes workflow_dispatch so
+# we can republish any past tag on demand — useful when seeding the tap for
+# the first time, or recovering from a transient failure.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to (re)publish (e.g. v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  update-tap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve tag and version
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            TAG="${{ inputs.tag }}"
+          fi
+          echo "tag=$TAG"          >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}"  >> "$GITHUB_OUTPUT"
+
+      - name: Checkout app repo
+        uses: actions/checkout@v4
+
+      - name: Download DMGs and compute SHA256
+        id: sha
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.meta.outputs.tag }}
+        run: |
+          mkdir dmgs
+          gh release download "$TAG" \
+            --repo "${{ github.repository }}" \
+            --pattern "*_aarch64.dmg" \
+            --pattern "*_x64.dmg" \
+            --dir dmgs
+
+          SHA_ARM=$(sha256sum dmgs/*_aarch64.dmg | awk '{print $1}')
+          SHA_X64=$(sha256sum dmgs/*_x64.dmg     | awk '{print $1}')
+          echo "arm=$SHA_ARM" >> "$GITHUB_OUTPUT"
+          echo "x64=$SHA_X64" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout homebrew-tap repo
+        uses: actions/checkout@v4
+        with:
+          repository: slothlabsorg/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Render Cask from template
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          SHA_ARM: ${{ steps.sha.outputs.arm }}
+          SHA_X64: ${{ steps.sha.outputs.x64 }}
+        run: |
+          mkdir -p homebrew-tap/Casks
+          sed \
+            -e "s|__VERSION__|$VERSION|g" \
+            -e "s|__SHA_ARM__|$SHA_ARM|g" \
+            -e "s|__SHA_X64__|$SHA_X64|g" \
+            distribute/homebrew/bastionorbit.rb.tmpl > homebrew-tap/Casks/bastionorbit.rb
+
+      - name: Commit and push to tap
+        working-directory: homebrew-tap
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          git config user.name  "bastionorbit-bot"
+          git config user.email "bot@slothlabs.org"
+          git add Casks/bastionorbit.rb
+          if git diff --staged --quiet; then
+            echo "Cask already up to date — nothing to push."
+            exit 0
+          fi
+          git commit -m "chore: bump bastionorbit to $VERSION"
+          git push
