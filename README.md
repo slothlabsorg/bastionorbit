@@ -1,6 +1,20 @@
-# Bastion Orbit
+<div align="center">
+  <h1>🔐 BastionOrbit — SSH Tunnel Manager for macOS</h1>
+  <p><strong>The free SSH tunnel manager for developers — one-click port forwarding through bastion hosts with auto-expiry TTL so you never leave a tunnel open by accident. Multi-bastion management, connectivity probes, and DataOrbit integration.</strong></p>
 
-**SSH tunnel manager for developers.** One click to forward a database or internal service through a bastion host — with auto-expiry timers so you never leave a tunnel open by accident.
+  [![Release](https://img.shields.io/github/v/release/slothlabsorg/bastionorbit?style=flat-square)](https://github.com/slothlabsorg/bastionorbit/releases)
+  [![License: FSL-1.1-MIT](https://img.shields.io/badge/License-FSL--1.1--MIT-blue.svg?style=flat-square)](LICENSE)
+  [![GitHub Sponsors](https://img.shields.io/github/sponsors/slothlabsorg?style=flat-square&logo=github&color=pink)](https://github.com/sponsors/slothlabsorg)
+  [![Website](https://img.shields.io/badge/web-slothlabs.org-10B981?style=flat-square)](https://slothlabs.org/bastionorbit)
+</div>
+
+---
+
+## What is BastionOrbit?
+
+**BastionOrbit is the SSH tunnel manager and bastion host GUI for macOS.** Click 30m or 1h next to any target and the tunnel opens — `ssh -N -L` under the hood, with an auto-expiry timer that closes the tunnel before you forget. Manage prod, staging, and your personal VPS side-by-side; probe connectivity before opening; pair with DataOrbit for instant database access through a bastion.
+
+If you've been pasting `ssh -L 5432:db.internal:5432 jump.prod.example.com` into your terminal sticky notes, BastionOrbit is the bastion host UI you've been wanting. It spawns the **real system `ssh` binary** (full agent / `~/.ssh/config` compatibility) wrapped in a clean native Rust app — not a re-implementation, not Electron.
 
 Part of the [SlothLabs](https://slothlabs.org) family — native Rust, free forever.
 
@@ -134,13 +148,40 @@ Please keep PRs focused: one feature or fix per PR. For large changes, open an i
 
 ---
 
+## We need your help 🙏
+
+BastionOrbit is built solo on nights and weekends. Concrete things contributors can pick up:
+
+- 🦀 **Rust contributors** — auto-reconnect logic, tunnel-drop detection
+- ⚛️ **React contributors** — system tray status icon, expiry notifications
+- 🐧 **Linux port** — `ssh-agent` + `~/.ssh/config` support across distros
+- 🪟 **Windows port** — OpenSSH for Windows compatibility
+- 📝 **Docs** — common bastion topology recipes (jump-to-jump, AWS SSM, etc.)
+- 🧪 **Beta testers** — corporate SSH configs, hardware keys, port collisions
+
+Pick anything labeled `good-first-issue` or `help-wanted` on the [tracker](https://github.com/slothlabsorg/bastionorbit/issues).
+
+---
+
 ## Support the project
 
-Bastion Orbit is free and built on nights and weekends. If it saves you time, consider supporting continued development:
+BastionOrbit is free and built on nights and weekends. If it saves you time:
 
-- [Ko-fi](https://ko-fi.com/slothlabs)
-- [GitHub Sponsors](https://github.com/sponsors/slothlabsorg)
-- [Polar.sh](https://polar.sh/slothlabs)
+- ☕ [Ko-fi](https://ko-fi.com/slothlabs)
+- ❤️ [GitHub Sponsors](https://github.com/sponsors/slothlabsorg)
+- ⭐ [Polar.sh](https://polar.sh/slothlabs)
+
+---
+
+## Other SlothLabs tools
+
+| | | |
+|---|---|---|
+| ☁️ [CloudOrbit](https://slothlabs.org/cloudorbit) | AWS client UI for macOS · SSO, EKS, kubeconfig | macOS · Win · Linux |
+| ⚡ [WattsOrbit](https://slothlabs.org/wattsorbit) | Mac power monitor for the menu bar | macOS · Win · Linux |
+| 🗄️ [DataOrbit](https://slothlabs.org/dataorbit) | Native DynamoDB GUI · live streams, cross-table joins | macOS · Win · Linux |
+| 🔍 [ProxyOrbit](https://slothlabs.org/proxyorbit) | Free Charles Proxy alternative | macOS · Win · Linux |
+| 🧜 [Mermaid Preview](https://slothlabs.org/mermaid-preview) | Mermaid IntelliJ / JetBrains plugin | All JetBrains IDEs |
 
 ---
 
