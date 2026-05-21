@@ -31,7 +31,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "REPLACE_WITH_PUBLIC_KEY_FROM: npx tauri signer generate -w ~/.tauri/bastionorbit.key",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFGOEQ3RTZFNjFBMUE3MTAKUldRUXA2RmhibjZOSDV2c1o0K0hFUTdBWnFZeERWaXRwMUZ6Unc5RnJydFhRMUg1RzhwQWhPWWUK",
       "endpoints": [
         "https://raw.githubusercontent.com/slothlabsorg/bastionorbit/main/latest.json"
       ]
