@@ -78,3 +78,12 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      - name: Upload .sig files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          find src-tauri/target -name "*.sig" | while read f; do
+            gh release upload "${{ github.ref_name }}" "$f" \
+              --repo "${{ github.repository }}" --clobber || true
+          done
