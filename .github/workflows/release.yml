@@ -82,6 +82,7 @@ jobs:
       - name: Upload .sig files
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
           find src-tauri/target -name "*.sig" | while read f; do
             gh release upload "${{ github.ref_name }}" "$f" \
