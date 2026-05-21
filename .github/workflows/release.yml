@@ -78,13 +78,38 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-
-      - name: Upload .sig files
+      # tauri-action uploads bundles but not .sig files.
+      # Re-sign the tar.gz we know tauri built, then upload the .sig.
+      - name: Sign and upload updater signatures
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         shell: bash
         run: |
-          find src-tauri/target -name "*.sig" | while read f; do
-            gh release upload "${{ github.ref_name }}" "$f" \
-              --repo "${{ github.repository }}" --clobber || true
+          sign() {
+            local tgz="$1" upload_name="$2"
+            [ -f "$tgz" ] || return 0
+            echo "Signing $tgz -> $upload_name"
+            npx @tauri-apps/cli signer sign "$tgz" \
+              --private-key "$TAURI_SIGNING_PRIVATE_KEY" \
+              --password "${TAURI_SIGNING_PRIVATE_KEY_PASSWORD:-}" 2>/dev/null || true
+            if [ -f "${tgz}.sig" ]; then
+              cp "${tgz}.sig" "/tmp/${upload_name}"
+              gh release upload "${{ github.ref_name }}" "/tmp/${upload_name}" \
+                --repo "${{ github.repository }}" --clobber
+              echo "  uploaded ${upload_name}"
+            fi
+          }
+          sign "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Bastion Orbit.app.tar.gz" \
+               "Bastion Orbit_aarch64.app.tar.gz.sig"
+          sign "src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Bastion Orbit.app.tar.gz" \
+               "Bastion Orbit_x64.app.tar.gz.sig"
+          for f in src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz; do
+            [ -f "$f" ] || continue
+            sign "$f" "$(basename "$f").sig"
+          done
+          for f in src-tauri/target/release/bundle/nsis/*-setup.nsis.zip; do
+            [ -f "$f" ] || continue
+            sign "$f" "$(basename "$f").sig"
           done
