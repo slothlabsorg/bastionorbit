@@ -1,5 +1,5 @@
 // ── Screens ───────────────────────────────────────────────────────────────────
-export type Screen = 'home' | 'tunnels' | 'settings' | 'docs' | 'support'
+export type Screen = 'home' | 'tunnels' | 'news' | 'settings' | 'docs' | 'support'
 
 // ── Target types ──────────────────────────────────────────────────────────────
 export type TargetType = 'postgres' | 'mysql' | 'redis' | 'mongodb' | 'http' | 'other'

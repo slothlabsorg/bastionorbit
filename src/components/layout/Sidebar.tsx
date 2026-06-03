@@ -11,6 +11,7 @@ interface SidebarProps {
   activeBastionId: string | null
   onSelectBastion: (id: string) => void
   onAddBastion: () => void
+  newsUnread?: number
 }
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -62,6 +63,15 @@ function IconPlus() {
   return (
     <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 5v14M5 12h14"/>
+    </svg>
+  )
+}
+
+function IconNews() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/>
+      <path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/>
     </svg>
   )
 }
@@ -125,6 +135,7 @@ function BastionItem({
 const topNav = [
   { id: 'home'    as Screen, label: 'Home',    icon: <IconHome /> },
   { id: 'tunnels' as Screen, label: 'Tunnels', icon: <IconTunnel /> },
+  { id: 'news'    as Screen, label: 'News',    icon: <IconNews /> },
 ]
 
 const bottomNav = [
@@ -138,6 +149,7 @@ const bottomNav = [
 export function Sidebar({
   screen, onNavigate, collapsed, onToggleCollapse,
   bastions, activeBastionId, onSelectBastion, onAddBastion,
+  newsUnread = 0,
 }: SidebarProps) {
   const w = collapsed ? 48 : 200
 
@@ -149,22 +161,36 @@ export function Sidebar({
     >
       {/* Top nav */}
       <div className="py-2 border-b border-border-subtle flex-shrink-0">
-        {topNav.map(item => (
-          <button
-            key={item.id}
-            onClick={() => onNavigate(item.id)}
-            className={`flex items-center gap-3 w-full transition-colors rounded-lg mx-1 px-3 py-1.5 ${
-              screen === item.id
-                ? 'bg-primary/10 text-primary'
-                : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface'
-            }`}
-            style={{ width: 'calc(100% - 8px)' }}
-            title={collapsed ? item.label : undefined}
-          >
-            <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">{item.icon}</span>
-            {!collapsed && <span className="text-xs font-medium whitespace-nowrap">{item.label}</span>}
-          </button>
-        ))}
+        {topNav.map(item => {
+          const badge = item.id === 'news' && newsUnread > 0 ? newsUnread : undefined
+          const isActive = screen === item.id
+          return (
+            <button
+              key={item.id}
+              onClick={() => onNavigate(item.id)}
+              className={`flex items-center gap-3 w-full transition-colors rounded-lg mx-1 px-3 py-1.5 ${
+                isActive
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface'
+              }`}
+              style={{ width: 'calc(100% - 8px)' }}
+              title={collapsed ? item.label : undefined}
+            >
+              <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
+                {item.icon}
+                {badge !== undefined && badge > 0 && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary border border-bg-elevated" />
+                )}
+              </span>
+              {!collapsed && <span className="text-xs font-medium whitespace-nowrap flex-1">{item.label}</span>}
+              {!collapsed && badge !== undefined && badge > 0 && !isActive && (
+                <span className="ml-auto text-[9px] font-mono bg-primary/15 text-primary rounded px-1 py-0.5 flex-shrink-0">
+                  {badge > 9 ? '9+' : badge}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       {/* Bastions section */}

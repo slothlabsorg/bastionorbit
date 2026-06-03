@@ -4,7 +4,10 @@ import { api } from '@/lib/tauri'
 import { mockBastions, mockTunnels } from '@/mock/data'
 import { Shell } from '@/components/layout/Shell'
 import { AddBastionWizard } from '@/components/ui/AddBastionWizard'
-import { UpdateBanner } from '@/components/ui/UpdateBanner'
+import { UpdaterModal } from '@/components/UpdaterModal'
+import { News } from '@/screens/News'
+import { getUnreadIds } from '@/lib/news'
+import { MOCK_FEED } from '@/data/news-mock'
 import { Home } from '@/screens/Home'
 import { Tunnels } from '@/screens/Tunnels'
 import { BastionDetail } from '@/screens/BastionDetail'
@@ -15,8 +18,15 @@ import { Support } from '@/screens/Support'
 function getUrlParam(key: string): string | null {
   try { return new URL(window.location.href).searchParams.get(key) } catch { return null }
 }
-const URL_SCREEN = (getUrlParam('screen') as Screen | null) ?? 'home'
-const URL_MOCK   = getUrlParam('mock') === '1'
+const URL_SCREEN  = (getUrlParam('screen') as Screen | null) ?? 'home'
+const URL_MOCK    = getUrlParam('mock') === '1'
+const URL_UPDATER = getUrlParam('updater') === '1'
+const URL_NEWS    = getUrlParam('news')    === '1'
+
+const MOCK_NEWS_INFO = {
+  version: '1.1.0',
+  body: `## What's new in v1.1.0\n\n- Multi-bastion management from a single window\n- Target probing — test connectivity before opening a tunnel\n- Auto-reconnect on transient SSH errors\n- ServerAlive keepalive settings\n- Status indicators with real-time bastion reachability`,
+}
 
 let idCounter = 100
 
@@ -28,6 +38,13 @@ export default function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [wizardOpen, setWizardOpen]         = useState(false)
   const [isLoading, setIsLoading]           = useState(true)
+  const [_updateInfo, setUpdateInfo]        = useState<{ version: string; body: string | null } | null>(
+    URL_NEWS ? MOCK_NEWS_INFO : null
+  )
+  const [updaterDismissed, setUpdaterDismissed] = useState(false)
+  const [newsUnread, setNewsUnread]         = useState(() =>
+    getUnreadIds(MOCK_FEED.items.filter(i => !i.expiresAt || new Date(i.expiresAt).getTime() > Date.now())).length
+  )
 
   useEffect(() => {
     const load = async () => {
@@ -164,6 +181,7 @@ export default function App() {
       )
     }
     if (screen === 'tunnels')  return <Tunnels tunnels={tunnels} onStop={handleStopTunnel} onExtend={handleExtendTunnel} />
+    if (screen === 'news')     return <News onVisit={() => setNewsUnread(0)} />
     if (screen === 'settings') return <Settings />
     if (screen === 'docs')     return <Docs />
     if (screen === 'support')  return <Support />
@@ -172,7 +190,13 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <UpdateBanner />
+      {(!URL_MOCK || URL_UPDATER) && (
+        <UpdaterModal
+          dismissed={updaterDismissed}
+          onDismiss={() => setUpdaterDismissed(true)}
+          onUpdateAvailable={(v, b) => setUpdateInfo({ version: v, body: b })}
+        />
+      )}
       <div className="flex-1 min-h-0">
         <Shell
           screen={screen}
@@ -184,6 +208,7 @@ export default function App() {
           onSelectBastion={(id) => { handleSelectBastion(id); setScreen('home') }}
           onAddBastion={() => setWizardOpen(true)}
           activeTunnelCount={activeTunnels.length}
+          newsUnread={newsUnread}
         >
           {renderContent()}
         </Shell>

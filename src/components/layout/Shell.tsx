@@ -14,13 +14,14 @@ interface ShellProps {
   onSelectBastion: (id: string) => void
   onAddBastion: () => void
   activeTunnelCount: number
+  newsUnread?: number
   children: React.ReactNode
 }
 
 export function Shell({
   screen, onNavigate, sidebarCollapsed, onToggleSidebar,
   bastions, activeBastionId, onSelectBastion, onAddBastion,
-  activeTunnelCount, children,
+  activeTunnelCount, newsUnread, children,
 }: ShellProps) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -36,6 +37,7 @@ export function Shell({
           activeBastionId={activeBastionId}
           onSelectBastion={onSelectBastion}
           onAddBastion={onAddBastion}
+          newsUnread={newsUnread}
         />
 
         <div className="flex-1 overflow-hidden">

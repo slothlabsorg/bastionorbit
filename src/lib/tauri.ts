@@ -56,4 +56,7 @@ export const api = {
 
   saveSettings: (settings: AppSettings) =>
     invoke<void>('save_settings', { settings }),
+
+  // ── Shell ─────────────────────────────────────────────────────────────────
+  openExternalUrl: (url: string) => invoke<void>('open_external_url', { url }),
 }
